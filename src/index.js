@@ -1,3 +1,5 @@
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 import './sass/styles.scss';
 import { fetchImages } from './fetchImages';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
@@ -14,7 +16,6 @@ function onInputName(evt) {
   evt.preventDefault();
   //  const name = evt.currentTarget.elements.searchQuery.value;
   const name = refs.input.value;
-
   if (!name) {
     // refs.list.innerHTML = '';
     return;
@@ -44,8 +45,10 @@ function createMarkup(data) {
       views,
       comments,
       downloads,
-    }) => `<div class="photo-card">
-  <img src="${webformatURL}" alt="" loading="lazy" />
+    }) => `   
+    <div class="photo-card gallery__image">
+    <a class="gallery__item" href="${largeImageURL}">
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b> ${likes}
@@ -74,3 +77,9 @@ function createErrorMessage(err) {
     `Errore.`
   );
 }
+
+let lightbox = new SimpleLightbox(".gallery a", {
+  captionsData: "alt",
+  captionDelay: 250
+});
+show.lightbox;
