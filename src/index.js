@@ -3,13 +3,25 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 import './sass/styles.scss';
 import { fetchImages } from './fetchImages';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+const options = {
+root: null,
+rootMargin: '300px',
+threshold: 1.0
+}
+const observer = new IntersectionObserver (onInfinityLoad, options);
 
- const refs = {
+let page = 1;
+let gallery = new SimpleLightbox(".gallery a", {
+  captionsData: "alt",
+  captionDelay: 250
+});
+const guard = document.querySelector('.js-guard');
+const refs = {
    form: document.querySelector('.search-form'),
    input: document.querySelector('.search-input'),
-   list: document.querySelector('.gallery'),
+   list: document.querySelector('.gallery')   
  };
-
+console.log(guard);
 refs.form.addEventListener('submit',onInputName);
 
 function onInputName(evt) {
@@ -21,7 +33,7 @@ function onInputName(evt) {
     return;
   }
 
-  fetchImages(name)
+  fetchImages(name, page)
     .then(data => {
       if (!data.total) {
         Notify.failure(
@@ -30,9 +42,10 @@ function onInputName(evt) {
         return;
       } else { Notify.success(`Hooray! We found ${data.totalHits} images.`);}
      createMarkup(data);
-      
+      observer.observe(guard);
     })
-    .catch(createErrorMessage);
+    // .catch(createErrorMessage);
+    .catch(err=>console.error(err));
 }
 
 function createMarkup(data) {
@@ -65,21 +78,20 @@ function createMarkup(data) {
   </div>
 </div>`
   );
-//   refs.info.innerHTML = '';
+  // refs.info.innerHTML = '';
   refs.list.innerHTML = markup.join('');
 }
 
 function createErrorMessage(err) {
   refs.list.innerHTML = '';
-//   refs.info.innerHTML = '';
+  // refs.info.innerHTML = '';
   // refs.input.value = ""
   Notify.failure(
-    `Errore.`
+    `${err}`
   );
 }
 
-let lightbox = new SimpleLightbox(".gallery a", {
-  captionsData: "alt",
-  captionDelay: 250
-});
-show.lightbox;
+function onInfinityLoad (entries, observer){
+console.log(entries)
+}
+
