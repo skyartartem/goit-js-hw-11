@@ -22,19 +22,45 @@ function onInputName(evt) {
 
   fetchImages(name)
     .then(data => {
-      
-     createMarkupCountries(data);
+      if (!data.total) {
+        Notify.failure(
+          `Sorry, there are no images matching your search query. Please try again.`
+        );
+        return;
+      } else { Notify.success(`Hooray! We found ${data.totalHits} images.`);}
+     createMarkup(data);
       
     })
     .catch(createErrorMessage);
 }
 
-function createMarkupCountries(data) {
-  const markup = data.map(
-    ({ flags: { svg }, name }) => `<li>
-    <img src="${svg}" alt="${name}" width="30">
-    <span>${name}</span>    
-    </li>`
+function createMarkup(data) {
+  const markup = data.hits.map(
+    ({
+      webformatURL,
+      largeImageURL,
+      tags,
+      likes,
+      views,
+      comments,
+      downloads,
+    }) => `<div class="photo-card">
+  <img src="${webformatURL}" alt="" loading="lazy" />
+  <div class="info">
+    <p class="info-item">
+      <b>Likes</b> ${likes}
+    </p>
+    <p class="info-item">
+      <b>Views</b> ${views}
+    </p>
+    <p class="info-item">
+      <b>Comments</b> ${comments}
+    </p>
+    <p class="info-item">
+      <b>Downloads</b> ${downloads}
+    </p>
+  </div>
+</div>`
   );
 //   refs.info.innerHTML = '';
   refs.list.innerHTML = markup.join('');
@@ -44,23 +70,7 @@ function createErrorMessage(err) {
   refs.list.innerHTML = '';
 //   refs.info.innerHTML = '';
   // refs.input.value = ""
-  Notify.failure(`Oops, there is no country with that name`);
+  Notify.failure(
+    `Errore.`
+  );
 }
-
-// `<div class="photo-card">
-//   <img src="" alt="" loading="lazy" />
-//   <div class="info">
-//     <p class="info-item">
-//       <b>Likes</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Views</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Comments</b>
-//     </p>
-//     <p class="info-item">
-//       <b>Downloads</b>
-//     </p>
-//   </div>
-// </div>`

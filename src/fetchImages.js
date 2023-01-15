@@ -1,12 +1,11 @@
-export function fetchImages(name) {
-    const BASE_URL = 'https://restcountries.com/v2/name';
-    
-    return fetch(
-      `${BASE_URL}/${name}?fields=name,capital,population,flags,languages`
-    ).then(resp => {
-      if (!resp.ok) {
-        throw new Error(resp.statusText);
-      }
-      return resp.json();
-    });
+export async function fetchImages(name) {
+    const BASE_URL = 'https://pixabay.com/api/';
+    const API_KEY = '32854135-9d23b52454b3142f3a14ae48f'
+    const resp = await fetch(
+    `${BASE_URL}?key=${API_KEY}&q=${name}&image_type=photo&orientation=horizontal&safesearch=true`
+  );
+  if (!resp.ok) {
+    throw new Error(resp.statusText);
+  }
+  return await resp.json();
 }
